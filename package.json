@@ -3,15 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 5001",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 5001",
     "lint": "eslint"
   },
   "dependencies": {
+    "@codezee-org/sixtify-smartgrid": "^0.1.23",
+    "@codezee/sixtify-brahma": "0.2.386",
+    "@emotion/react": "11.14.0",
+    "@emotion/styled": "11.14.1",
+    "@mui/icons-material": "5.18.0",
+    "@mui/material": "5.18.0",
     "next": "16.4.6",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "react-hook-form": "7.92.0"
   },
   "devDependencies": {
     "@types/node": "^20",
