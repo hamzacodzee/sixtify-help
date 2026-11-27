@@ -11,6 +11,16 @@ const lightTheme = createTheme({
   ...brahmaTheme,
   components: {
     ...brahmaTheme.components,
+    MuiMenu: {
+      defaultProps: {
+        disableScrollLock: true,
+      },
+    },
+    MuiPopover: {
+      defaultProps: {
+        disableScrollLock: true,
+      },
+    },
     MuiCssBaseline: {
       styleOverrides: {
         html: {

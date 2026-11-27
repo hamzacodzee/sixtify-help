@@ -2,12 +2,8 @@
 
 import React from "react";
 import type { Control } from "react-hook-form";
-import { Button, Stepper, TextField, Tooltip } from "@codezee/sixtify-brahma";
+import { Button, TextField, Tooltip } from "@codezee/sixtify-brahma";
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Alert,
   Box,
   IconButton,
   MenuItem,
@@ -18,13 +14,16 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlined";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import NotesIcon from "@mui/icons-material/Notes";
+import WarningAmberOutlinedIcon from "@mui/icons-material/WarningAmberOutlined";
 import { DynamicRichTextEditor } from "@/components/common/RichTextEditor/DynamicRichTextEditor";
 import type { ArticleBlock } from "@/types/article";
 import { type ArticleEditorFormValues, BLOCK_TYPES } from "./blockConstants";
 import { CardsBlockEditor } from "./CardsBlockEditor";
+import { ImageBlockEditor } from "./ImageBlockEditor";
 
 type BlockCardProps = {
   block: ArticleBlock;
@@ -164,68 +163,60 @@ export function BlockCard({
               disabled={readOnly}
               placeholder="Section title (e.g. Step-by-Step)"
             />
-            {readOnly ? (
-              <Stepper
-                orientation="vertical"
-                steps={(block.items ?? []).map(
-                  (item, i) => item || `Step ${i + 1}`
-                )}
-                activeStep={(block.items ?? []).length}
-                showStepLabels
-              />
-            ) : (
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 0.75 }}>
-                {(block.items ?? [""]).map((_, stepIdx) => (
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 0.75 }}>
+              {(block.items ?? [""]).map((_, stepIdx) => (
+                <Box
+                  key={stepIdx}
+                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                >
                   <Box
-                    key={stepIdx}
-                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                    sx={{
+                      width: 22,
+                      height: 22,
+                      borderRadius: "50%",
+                      backgroundColor: (theme) =>
+                        theme.palette.mode === "dark"
+                          ? "rgba(51, 153, 255, 0.16)"
+                          : "#eff6ff",
+                      color: "primary.main",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "0.75rem",
+                      fontWeight: 700,
+                      flexShrink: 0,
+                    }}
                   >
-                    <Box
-                      sx={{
-                        width: 22,
-                        height: 22,
-                        borderRadius: "50%",
-                        backgroundColor: (theme) =>
-                          theme.palette.mode === "dark"
-                            ? "rgba(51, 153, 255, 0.16)"
-                            : "#eff6ff",
-                        color: "primary.main",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "0.75rem",
-                        fontWeight: 700,
-                        flexShrink: 0,
+                    {stepIdx + 1}
+                  </Box>
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <TextField
+                      name={`blocks.${index}.items.${stepIdx}`}
+                      control={control}
+                      disabled={readOnly}
+                      fullWidth
+                      placeholder={`Step ${stepIdx + 1} description...`}
+                    />
+                  </Box>
+                  {!readOnly && (block.items ?? [""]).length > 1 && (
+                    <IconButton
+                      size="small"
+                      color="error"
+                      sx={{ p: 0.4 }}
+                      onClick={() => {
+                        const next = (block.items ?? [""]).filter(
+                          (_, i) => i !== stepIdx
+                        );
+
+                        onUpdateBlock(block.id, { items: next });
                       }}
                     >
-                      {stepIdx + 1}
-                    </Box>
-                    <Box sx={{ flex: 1, minWidth: 0 }}>
-                      <TextField
-                        name={`blocks.${index}.items.${stepIdx}`}
-                        control={control}
-                        fullWidth
-                        placeholder={`Step ${stepIdx + 1} description...`}
-                      />
-                    </Box>
-                    {(block.items ?? [""]).length > 1 && (
-                      <IconButton
-                        size="small"
-                        color="error"
-                        sx={{ p: 0.4 }}
-                        onClick={() => {
-                          const next = (block.items ?? [""]).filter(
-                            (_, i) => i !== stepIdx
-                          );
-
-                          onUpdateBlock(block.id, { items: next });
-                        }}
-                      >
-                        <DeleteOutlineIcon sx={{ fontSize: 16 }} />
-                      </IconButton>
-                    )}
-                  </Box>
-                ))}
+                      <DeleteOutlineIcon sx={{ fontSize: 16 }} />
+                    </IconButton>
+                  )}
+                </Box>
+              ))}
+              {!readOnly && (
                 <Box sx={{ pt: 0.25 }}>
                   <Button
                     size="small"
@@ -246,149 +237,135 @@ export function BlockCard({
                     Add Step
                   </Button>
                 </Box>
-              </Box>
-            )}
+              )}
+            </Box>
           </Box>
         )}
 
-        {block.type === "callout" &&
-          (readOnly ? (
-            <Alert severity={block.variant ?? "info"} variant="outlined">
-              {block.title && (
-                <Typography
-                  variant="subtitle2"
-                  sx={{ fontWeight: 600, mb: 0.5 }}
-                >
-                  {block.title}
-                </Typography>
-              )}
-              <Typography variant="body2">{block.content}</Typography>
-            </Alert>
-          ) : (
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <Select
-                  size="small"
-                  value={block.variant ?? "info"}
-                  onChange={(e) =>
-                    onUpdateBlock(block.id, {
-                      variant: e.target.value as "info" | "warning" | "success",
-                    })
-                  }
-                  sx={{
-                    width: 120,
-                    flexShrink: 0,
-                    "& .MuiSelect-select": {
-                      py: 0.85,
-                      fontSize: "0.8125rem",
-                    },
-                  }}
-                >
-                  <MenuItem value="info">Info</MenuItem>
-                  <MenuItem value="warning">Warning</MenuItem>
-                  <MenuItem value="success">Success</MenuItem>
-                </Select>
-                <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <TextField
-                    name={`blocks.${index}.title`}
-                    control={control}
-                    fullWidth
-                    placeholder="Callout title (optional)"
-                  />
-                </Box>
-              </Box>
-              <TextField
-                name={`blocks.${index}.content`}
-                control={control}
-                multiline
-                rows={2}
-                placeholder="Callout message..."
-              />
-            </Box>
-          ))}
-
-        {block.type === "image" && (
+        {block.type === "callout" && (
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-            {!readOnly ? (
-              <Box
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Select
+                size="small"
+                disabled={readOnly}
+                value={block.variant ?? "info"}
+                onChange={(e) =>
+                  onUpdateBlock(block.id, {
+                    variant: e.target.value as "info" | "warning" | "success",
+                  })
+                }
+                renderValue={(val) => {
+                  if (val === "warning") {
+                    return (
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <WarningAmberOutlinedIcon
+                          sx={{ fontSize: 18, color: "#d97706" }}
+                        />
+                      </Box>
+                    );
+                  }
+
+                  if (val === "success") {
+                    return (
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <CheckCircleOutlineIcon
+                          sx={{ fontSize: 18, color: "#16a34a" }}
+                        />
+                      </Box>
+                    );
+                  }
+
+                  return (
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <InfoOutlinedIcon
+                        sx={{ fontSize: 18, color: "#0284c7" }}
+                      />
+                    </Box>
+                  );
+                }}
                 sx={{
-                  display: "grid",
-                  gridTemplateColumns: { xs: "1fr", sm: "1.5fr 1fr" },
-                  gap: 1,
+                  width: 64,
+                  flexShrink: 0,
+                  "& .MuiSelect-select": {
+                    py: 0.75,
+                    pl: 1.25,
+                    display: "flex",
+                    alignItems: "center",
+                  },
                 }}
               >
+                <MenuItem value="info" sx={{ gap: 1, fontSize: "0.8125rem" }}>
+                  <InfoOutlinedIcon sx={{ fontSize: 18, color: "#0284c7" }} />
+                  Info
+                </MenuItem>
+                <MenuItem
+                  value="warning"
+                  sx={{ gap: 1, fontSize: "0.8125rem" }}
+                >
+                  <WarningAmberOutlinedIcon
+                    sx={{ fontSize: 18, color: "#d97706" }}
+                  />
+                  Warning
+                </MenuItem>
+                <MenuItem
+                  value="success"
+                  sx={{ gap: 1, fontSize: "0.8125rem" }}
+                >
+                  <CheckCircleOutlineIcon
+                    sx={{ fontSize: 18, color: "#16a34a" }}
+                  />
+                  Success
+                </MenuItem>
+              </Select>
+              <Box sx={{ flex: 1, minWidth: 0 }}>
                 <TextField
-                  name={`blocks.${index}.imageUrl`}
+                  name={`blocks.${index}.title`}
                   control={control}
+                  disabled={readOnly}
                   fullWidth
-                  placeholder="Image URL (https://...)"
-                />
-                <TextField
-                  name={`blocks.${index}.caption`}
-                  control={control}
-                  fullWidth
-                  placeholder="Image caption (optional)"
+                  placeholder="Callout title (optional)"
                 />
               </Box>
-            ) : (
-              block.caption && (
-                <TextField
-                  name={`blocks.${index}.caption`}
-                  control={control}
-                  disabled
-                  placeholder="Image caption"
-                />
-              )
-            )}
-            {block.imageUrl && (
-              <Box
-                component="img"
-                src={block.imageUrl}
-                alt={block.caption || "Article image"}
-                sx={{
-                  maxHeight: 200,
-                  maxWidth: "100%",
-                  objectFit: "contain",
-                  borderRadius: 1.5,
-                  border: "1px solid",
-                  borderColor: "divider",
-                  alignSelf: "flex-start",
-                }}
-              />
-            )}
+            </Box>
+            <TextField
+              name={`blocks.${index}.content`}
+              control={control}
+              disabled={readOnly}
+              multiline
+              rows={2}
+              placeholder="Callout message..."
+            />
           </Box>
         )}
 
-        {block.type === "faq" &&
-          (readOnly ? (
-            <Accordion variant="outlined" disableGutters>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                  {block.question || "Untitled Question"}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Typography variant="body2" color="text.secondary">
-                  {block.answer}
-                </Typography>
-              </AccordionDetails>
-            </Accordion>
-          ) : (
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              <TextField
-                name={`blocks.${index}.question`}
-                control={control}
-                placeholder="Question"
-              />
-              <TextField
-                name={`blocks.${index}.answer`}
-                control={control}
-                multiline
-                rows={2}
-                placeholder="Answer"
-              />
-            </Box>
-          ))}
+        {block.type === "image" && (
+          <ImageBlockEditor
+            block={block}
+            index={index}
+            control={control}
+            readOnly={readOnly}
+            onUpdateBlock={onUpdateBlock}
+          />
+        )}
+
+        {block.type === "faq" && (
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <TextField
+              name={`blocks.${index}.question`}
+              control={control}
+              disabled={readOnly}
+              placeholder="Question"
+            />
+            <TextField
+              name={`blocks.${index}.answer`}
+              control={control}
+              disabled={readOnly}
+              multiline
+              rows={2}
+              placeholder="Answer"
+            />
+          </Box>
+        )}
 
         {block.type === "cards" && (
           <CardsBlockEditor

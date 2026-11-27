@@ -17,7 +17,6 @@ import { Underline } from "@tiptap/extension-underline";
 import { StarterKit } from "@tiptap/starter-kit";
 import {
   FontSize,
-  HeadingWithAnchor,
   LinkBubbleMenuHandler,
   ResizableImage,
   TableImproved,
@@ -46,7 +45,6 @@ export const useExtensions = ({
   return useMemo(() => {
     return [
       StarterKit.configure({
-        heading: false,
         link: false,
         underline: false,
       }),
@@ -65,7 +63,6 @@ export const useExtensions = ({
         openOnClick: false,
       }),
       LinkBubbleMenuHandler,
-      HeadingWithAnchor,
       TextAlign.configure({
         types: ["heading", "paragraph", "image"],
         defaultAlignment: "left",

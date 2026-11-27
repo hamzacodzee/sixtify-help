@@ -185,7 +185,7 @@ export default function ArticleEditor({
         summary: firstText,
         blocks: currentBlocks,
         prerequisites: [],
-        features: initialData?.features ?? [],
+        features: [],
         steps: [],
         notes: [],
         whatNext: "",

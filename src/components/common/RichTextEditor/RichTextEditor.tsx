@@ -60,7 +60,7 @@ const fileListToImageFiles = (fileList: FileList): File[] =>
 type MuiRichTextEditorProps = ComponentProps<typeof MuiRichTextEditorType>;
 
 export type RichTextEditorProps<
-  TFieldValues extends FieldValues = FieldValues,
+  TFieldValues extends FieldValues = FieldValues
 > = {
   minHeight?: string;
   isEditable?: boolean;
@@ -101,15 +101,19 @@ export const RichTextEditor = forwardRef<
 
     const [editorInstance, setEditorInstance] = useState<Editor | null>(null);
 
-    useImperativeHandle(ref, () => {
-      if (rteRef.current) {
-        return rteRef.current;
-      }
+    useImperativeHandle(
+      ref,
+      () => {
+        if (rteRef.current) {
+          return rteRef.current;
+        }
 
-      return {
-        editor: null,
-      };
-    }, []);
+        return {
+          editor: null,
+        };
+      },
+      []
+    );
 
     const handleNewImageFiles = useCallback(
       (files: File[], insertPosition?: number): void => {
@@ -252,11 +256,20 @@ export const RichTextEditor = forwardRef<
                   py: 0.35,
                   px: 0.75,
                 },
+                "& .MuiTiptap-RichTextField-content": {
+                  padding: 0,
+                },
                 "& .ProseMirror": {
-                  minHeight,
-                  padding: "8px 12px",
+                  minHeight: isEditable ? minHeight : "auto",
+                  padding: "5px 6px",
                   fontSize: "0.8125rem",
                   lineHeight: 1.6,
+                  "& > :first-child": {
+                    marginTop: 0,
+                  },
+                  "& > :last-child": {
+                    marginBottom: 0,
+                  },
                   "& pre": {
                     backgroundColor:
                       theme.palette.mode === "dark" ? "#0b0e14" : "#f1f5f9",
@@ -308,4 +321,3 @@ export const RichTextEditor = forwardRef<
 );
 
 RichTextEditor.displayName = "RichTextEditor";
-

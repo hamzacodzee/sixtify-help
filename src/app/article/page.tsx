@@ -234,8 +234,11 @@ export default function ArticlePage() {
             <ArticleBlockRenderer blocks={article.blocks} />
           )}
 
-          {/* Before You Begin */}
-          {article.prerequisites.length > 0 && (
+          {/* Legacy Sections (only for articles without blocks) */}
+          {(!article.blocks || article.blocks.length === 0) && (
+            <>
+              {/* Before You Begin */}
+              {article.prerequisites.length > 0 && (
             <Box id="before-you-begin">
               <Typography variant="h6" sx={{ fontWeight: 700, mb: 1.5 }}>
                 Before You Begin
@@ -407,6 +410,8 @@ export default function ArticlePage() {
                 </Typography>
               </Paper>
             </Box>
+          )}
+            </>
           )}
 
           <ArticleFeedbackAndRelated

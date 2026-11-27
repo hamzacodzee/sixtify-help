@@ -11,6 +11,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutlined";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import WarningAmberOutlinedIcon from "@mui/icons-material/WarningAmberOutlined";
@@ -53,7 +54,7 @@ export function StepList({ steps }: StepListProps) {
                   height: 28,
                   mt: 0.5,
                   borderRadius: "50%",
-                  backgroundColor: "primary.main",
+                  backgroundColor: "#0284c7",
                   color: "#ffffff",
                   display: "flex",
                   alignItems: "center",
@@ -194,20 +195,28 @@ export function ArticleBlockRenderer({ blocks }: ArticleBlockRendererProps) {
                 borderColor: isWarn
                   ? "#fde68a"
                   : isSuccess
-                    ? "success.main"
-                    : "divider",
+                    ? "#bbf7d0"
+                    : "#bfdbfe",
                 borderLeft: "4px solid",
                 borderLeftColor: isWarn
                   ? "#d97706"
                   : isSuccess
-                    ? "success.main"
-                    : "primary.main",
+                    ? "#16a34a"
+                    : "#0284c7",
                 backgroundColor: isWarn
                   ? (theme) =>
                       theme.palette.mode === "dark"
                         ? "rgba(245, 158, 11, 0.08)"
                         : "#fffbeb"
-                  : "background.paper",
+                  : isSuccess
+                    ? (theme) =>
+                        theme.palette.mode === "dark"
+                          ? "rgba(22, 163, 74, 0.08)"
+                          : "#f0fdf4"
+                    : (theme) =>
+                        theme.palette.mode === "dark"
+                          ? "rgba(2, 132, 199, 0.08)"
+                          : "#eff6ff",
                 display: "flex",
                 alignItems: "flex-start",
                 gap: 1.25,
@@ -218,11 +227,15 @@ export function ArticleBlockRenderer({ blocks }: ArticleBlockRendererProps) {
                   fontSize="small"
                   sx={{ color: "#d97706", mt: 0.25 }}
                 />
+              ) : isSuccess ? (
+                <CheckCircleOutlineIcon
+                  fontSize="small"
+                  sx={{ color: "#16a34a", mt: 0.25 }}
+                />
               ) : (
                 <InfoOutlinedIcon
-                  color={isSuccess ? "success" : "primary"}
                   fontSize="small"
-                  sx={{ mt: 0.25 }}
+                  sx={{ color: "#0284c7", mt: 0.25 }}
                 />
               )}
               <Box>
