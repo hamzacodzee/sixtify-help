@@ -14,10 +14,9 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
-import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
-import CampaignOutlinedIcon from "@mui/icons-material/CampaignOutlined";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import AppShell from "@/components/layout/AppShell";
+import { HomeQuickLinks } from "@/components/home/HomeQuickLinks";
 import { DynamicMuiIcon } from "@/components/common/IconPicker";
 import type {
   Category} from "@/types/category";
@@ -25,7 +24,7 @@ import {
   CATEGORY_STORAGE_KEY,
   DEFAULT_CATEGORIES,
 } from "@/types/category";
-import { getStoredArticles } from "@/types/article";
+import { buildDefaultArticles, getStoredArticles } from "@/types/article";
 
 const QUICK_TOPICS = [
   "Attendance",
@@ -39,7 +38,7 @@ const QUICK_TOPICS = [
 export default function HomePage() {
   const [categories, setCategories] = useState<Category[]>(DEFAULT_CATEGORIES);
 
-  const [articles, setArticles] = useState(() => getStoredArticles());
+  const [articles, setArticles] = useState(() => buildDefaultArticles());
 
   const [search, setSearch] = useState("");
 
@@ -445,113 +444,7 @@ export default function HomePage() {
           </Box>
 
           {/* Right: Quick Links */}
-          <Paper
-            variant="outlined"
-            sx={{
-              p: 2.5,
-              borderRadius: 2.5,
-              borderColor: "divider",
-              backgroundColor: "background.paper",
-            }}
-          >
-            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "primary.main", mb: 2 }}>
-              Quick Links
-            </Typography>
-
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-              <Paper
-                variant="outlined"
-                component={Link}
-                href="/category"
-                sx={{
-                  p: 1.5,
-                  borderRadius: 2,
-                  borderColor: "#e2e8f0",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  textDecoration: "none",
-                  color: "inherit",
-                  "&:hover": {
-                    borderColor: "#93c5fd",
-                    backgroundColor: "#f8fafc",
-                  },
-                }}
-              >
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                  <Box
-                    sx={{
-                      width: 36,
-                      height: 36,
-                      borderRadius: 1.5,
-                      backgroundColor: "#eff6ff",
-                      color: "primary.main",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <MenuBookOutlinedIcon fontSize="small" />
-                  </Box>
-                  <Box>
-                    <Typography variant="body2" sx={{ fontWeight: 600, color: "primary.main" }}>
-                      Knowledge Base
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      Browse helpful articles
-                    </Typography>
-                  </Box>
-                </Box>
-                <ArrowForwardIcon fontSize="small" color="action" />
-              </Paper>
-
-              <Paper
-                variant="outlined"
-                component={Link}
-                href="/category"
-                sx={{
-                  p: 1.5,
-                  borderRadius: 2,
-                  borderColor: "#e2e8f0",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  textDecoration: "none",
-                  color: "inherit",
-                  "&:hover": {
-                    borderColor: "#93c5fd",
-                    backgroundColor: "#f8fafc",
-                  },
-                }}
-              >
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                  <Box
-                    sx={{
-                      width: 36,
-                      height: 36,
-                      borderRadius: 1.5,
-                      backgroundColor: "#eff6ff",
-                      color: "primary.main",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <CampaignOutlinedIcon fontSize="small" />
-                  </Box>
-                  <Box>
-                    <Typography variant="body2" sx={{ fontWeight: 600, color: "primary.main" }}>
-                      Announcements
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      Latest updates from Sixtifi
-                    </Typography>
-                  </Box>
-                </Box>
-                <ArrowForwardIcon fontSize="small" color="action" />
-              </Paper>
-            </Box>
-          </Paper>
+          <HomeQuickLinks />
         </Box>
       </Box>
     </AppShell>

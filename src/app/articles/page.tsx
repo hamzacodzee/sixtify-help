@@ -8,21 +8,19 @@ import { SmartGrid } from "@codezee-org/sixtify-smartgrid";
 import {
   Box,
   Chip,
-  IconButton,
-  Menu,
-  MenuItem,
   Paper,
   Typography,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlined";
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import AppShell from "@/components/layout/AppShell";
 import { RedirectionCell } from "@/components/common/RedirectionCell";
+import { RowActionMenu } from "@/components/common/RowActionMenu";
 import type { Article } from "@/types/article";
-import { getStoredArticles, saveStoredArticles } from "@/types/article";
+import {
+  buildDefaultArticles,
+  getStoredArticles,
+  saveStoredArticles,
+} from "@/types/article";
 import type { Category } from "@/types/category";
 import { CATEGORY_STORAGE_KEY, DEFAULT_CATEGORIES } from "@/types/category";
 
@@ -43,7 +41,7 @@ export default function ArticlesPage() {
   const router = useRouter();
 
   const [articles, setArticles] = useState<Article[]>(() =>
-    getStoredArticles()
+    buildDefaultArticles()
   );
 
   const { control } = useForm<{ search: string; categoryId: string }>({
@@ -59,13 +57,9 @@ export default function ArticlesPage() {
     pageSize: 20,
   });
 
-  const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
-
-  const [menuArticle, setMenuArticle] = useState<Article | null>(null);
-
   useEffect(() => {
-    saveStoredArticles(articles);
-  }, [articles]);
+    setArticles(getStoredArticles());
+  }, []);
 
   const categoryMap = useMemo(() => {
     const map: Record<string, { title: string; subs: Record<string, string> }> =
@@ -103,7 +97,13 @@ export default function ArticlesPage() {
   }, [articles, search, filterCategoryId]);
 
   const handleDeleteArticle = (id: string) => {
-    setArticles((prev) => prev.filter((a) => a.id !== id));
+    setArticles((prev) => {
+      const next = prev.filter((a) => a.id !== id);
+
+      saveStoredArticles(next);
+
+      return next;
+    });
   };
 
   const safePageIndex =
@@ -273,17 +273,21 @@ export default function ArticlesPage() {
                 minSize: 30,
                 maxSize: 30,
                 pinned: "right",
-                cell: ({ row }) => (
-                  <IconButton
-                    size="small"
-                    onClick={(e) => {
-                      setMenuAnchorEl(e.currentTarget);
-                      setMenuArticle(row.original);
-                    }}
-                  >
-                    <MoreVertIcon fontSize="small" />
-                  </IconButton>
-                ),
+                cell: ({ row }) => {
+                  const art = row.original;
+
+                  return (
+                    <RowActionMenu
+                      onView={() =>
+                        router.push(`/articles/editor?id=${art.id}&mode=view`)
+                      }
+                      onEdit={() =>
+                        router.push(`/articles/editor?id=${art.id}`)
+                      }
+                      onDelete={() => handleDeleteArticle(art.id)}
+                    />
+                  );
+                },
               },
             ]}
           />
@@ -304,49 +308,6 @@ export default function ArticlesPage() {
           />
         </Box>
       </Paper>
-
-      <Menu
-        anchorEl={menuAnchorEl}
-        open={Boolean(menuAnchorEl)}
-        onClose={() => setMenuAnchorEl(null)}
-      >
-        <MenuItem
-          onClick={() => {
-            if (menuArticle) {
-              router.push(`/articles/editor?id=${menuArticle.id}&mode=view`);
-            }
-            setMenuAnchorEl(null);
-          }}
-          sx={{ gap: 1, fontSize: "0.875rem" }}
-        >
-          <VisibilityOutlinedIcon fontSize="small" />
-          View
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            if (menuArticle) {
-              router.push(`/articles/editor?id=${menuArticle.id}`);
-            }
-            setMenuAnchorEl(null);
-          }}
-          sx={{ gap: 1, fontSize: "0.875rem" }}
-        >
-          <EditOutlinedIcon fontSize="small" />
-          Edit
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            if (menuArticle) {
-              handleDeleteArticle(menuArticle.id);
-            }
-            setMenuAnchorEl(null);
-          }}
-          sx={{ gap: 1, fontSize: "0.875rem", color: "error.main" }}
-        >
-          <DeleteOutlineIcon fontSize="small" />
-          Delete
-        </MenuItem>
-      </Menu>
     </AppShell>
   );
 }

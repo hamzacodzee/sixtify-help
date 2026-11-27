@@ -7,22 +7,16 @@ import { SmartGrid } from "@codezee-org/sixtify-smartgrid";
 import {
   Box,
   Chip,
-  IconButton,
-  Menu,
-  MenuItem,
   Paper,
   Tooltip,
   Typography,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlined";
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import AppShell from "@/components/layout/AppShell";
 import CategoryDialog from "@/components/category/CategoryDialog";
 import { DynamicMuiIcon } from "@/components/common/IconPicker";
 import { RedirectionCell } from "@/components/common/RedirectionCell";
+import { RowActionMenu } from "@/components/common/RowActionMenu";
 import type { Category } from "@/types/category";
 import { CATEGORY_STORAGE_KEY, DEFAULT_CATEGORIES } from "@/types/category";
 
@@ -56,10 +50,6 @@ export default function CategoryPage() {
   const [dialogReadOnly, setDialogReadOnly] = useState(false);
 
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-
-  const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
-
-  const [menuCategory, setMenuCategory] = useState<Category | null>(null);
 
   useEffect(() => {
     try {
@@ -351,17 +341,25 @@ export default function CategoryPage() {
                 minSize: 30,
                 maxSize: 30,
                 pinned: "right",
-                cell: ({ row }) => (
-                  <IconButton
-                    size="small"
-                    onClick={(e) => {
-                      setMenuAnchorEl(e.currentTarget);
-                      setMenuCategory(row.original);
-                    }}
-                  >
-                    <MoreVertIcon fontSize="small" />
-                  </IconButton>
-                ),
+                cell: ({ row }) => {
+                  const cat = row.original;
+
+                  return (
+                    <RowActionMenu
+                      onView={() => {
+                        setEditingCategory(cat);
+                        setDialogReadOnly(true);
+                        setDialogOpen(true);
+                      }}
+                      onEdit={() => {
+                        setEditingCategory(cat);
+                        setDialogReadOnly(false);
+                        setDialogOpen(true);
+                      }}
+                      onDelete={() => handleDeleteCategory(cat.id)}
+                    />
+                  );
+                },
               },
             ]}
           />
@@ -382,53 +380,6 @@ export default function CategoryPage() {
           />
         </Box>
       </Paper>
-
-      <Menu
-        anchorEl={menuAnchorEl}
-        open={Boolean(menuAnchorEl)}
-        onClose={() => setMenuAnchorEl(null)}
-      >
-        <MenuItem
-          onClick={() => {
-            if (menuCategory) {
-              setEditingCategory(menuCategory);
-              setDialogReadOnly(true);
-              setDialogOpen(true);
-            }
-            setMenuAnchorEl(null);
-          }}
-          sx={{ gap: 1, fontSize: "0.875rem" }}
-        >
-          <VisibilityOutlinedIcon fontSize="small" />
-          View
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            if (menuCategory) {
-              setEditingCategory(menuCategory);
-              setDialogReadOnly(false);
-              setDialogOpen(true);
-            }
-            setMenuAnchorEl(null);
-          }}
-          sx={{ gap: 1, fontSize: "0.875rem" }}
-        >
-          <EditOutlinedIcon fontSize="small" />
-          Edit
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            if (menuCategory) {
-              handleDeleteCategory(menuCategory.id);
-            }
-            setMenuAnchorEl(null);
-          }}
-          sx={{ gap: 1, fontSize: "0.875rem", color: "error.main" }}
-        >
-          <DeleteOutlineIcon fontSize="small" />
-          Delete
-        </MenuItem>
-      </Menu>
 
       <CategoryDialog
         open={dialogOpen}

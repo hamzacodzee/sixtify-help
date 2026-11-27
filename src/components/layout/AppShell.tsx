@@ -31,9 +31,9 @@ const NAV_ITEMS = [
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
-  const isCategory = pathname === "/category";
+  const isCategory = pathname === "/category" || pathname.startsWith("/category/");
 
-  const isArticles = pathname === "/articles";
+  const isArticles = pathname === "/articles" || pathname.startsWith("/articles/");
 
   const { user, logout } = useAuth();
 
@@ -67,8 +67,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
           const selected =
             item.href === "/"
-              ? pathname !== "/category" && pathname !== "/articles"
-              : pathname === item.href;
+              ? !isCategory && !isArticles
+              : pathname === item.href || pathname.startsWith(`${item.href}/`);
 
           return (
             <ListItemButton

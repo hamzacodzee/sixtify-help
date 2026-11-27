@@ -9,15 +9,26 @@ export type ArticleBlockType =
   | "checklist"
   | "table"
   | "code"
-  | "faq";
+  | "faq"
+  | "cards";
+
+export type ArticleCardItem = {
+  icon?: string;
+  iconColor?: string;
+  tag: string;
+  title: string;
+  description: string;
+};
 
 export type ArticleBlock = {
   id: string;
   type: ArticleBlockType;
   title?: string;
+  subtitle?: string;
   content?: string;
   variant?: "info" | "warning" | "success";
   items?: string[];
+  cards?: ArticleCardItem[];
   imageUrl?: string;
   caption?: string;
   headers?: string[];

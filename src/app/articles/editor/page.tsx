@@ -3,7 +3,7 @@
 import React, { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import AppShell from "@/components/layout/AppShell";
-import ArticleDialog from "@/components/article/ArticleDialog";
+import ArticleEditor from "@/components/article/ArticleEditor";
 import type {
   Article} from "@/types/article";
 import {
@@ -42,7 +42,7 @@ function ArticleEditorContent() {
     }
     setArticles(getStoredArticles());
     setLoaded(true);
-  }, []);
+  }, [articleId, readOnly]);
 
   if (!loaded) {return null;}
 
@@ -76,9 +76,8 @@ function ArticleEditorContent() {
   };
 
   return (
-    <ArticleDialog
-      open
-      variant="page"
+    <ArticleEditor
+      key={`${articleId ?? "new"}-${readOnly}`}
       categories={categories}
       initialData={initialData}
       readOnly={readOnly}
