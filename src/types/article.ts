@@ -6,9 +6,6 @@ export type ArticleBlockType =
   | "step"
   | "image"
   | "callout"
-  | "checklist"
-  | "table"
-  | "code"
   | "faq"
   | "cards";
 
@@ -31,8 +28,6 @@ export type ArticleBlock = {
   cards?: ArticleCardItem[];
   imageUrl?: string;
   caption?: string;
-  headers?: string[];
-  rows?: string[][];
   question?: string;
   answer?: string;
 }
@@ -76,39 +71,79 @@ export function buildDefaultArticles(): Article[] {
           subCategoryId: sub.id,
           title: faq.question,
           summary: faq.answer,
-          prerequisites: [
-            "Ensure you are logged into your Sixtifi web application.",
-            `Verify that you have access to ${cat.title} > ${sub.title}.`,
-          ],
-          features: [
+          blocks: [
             {
-              tag: "REAL-TIME",
-              title: "Instant Updates",
-              description: "Changes are reflected immediately across employee records and dashboards.",
+              id: `blk-summary-${cat.id}-${sub.id}-${idx + 1}`,
+              type: "callout",
+              variant: "info",
+              content: faq.answer,
             },
             {
-              tag: "COMPLIANCE",
-              title: "Audit & Validation",
-              description: "Built-in checks ensure policy compliance and accurate audit trails.",
+              id: `blk-prereq-${cat.id}-${sub.id}-${idx + 1}`,
+              type: "paragraph",
+              content: `<h3>Before You Begin</h3><ul><li>Ensure you are logged into your Sixtifi web application.</li><li>Verify that you have access to <strong>${cat.title} &gt; ${sub.title}</strong>.</li></ul>`,
             },
             {
-              tag: "FLEXIBLE",
-              title: "Configurable Rules",
-              description: "Tailor workflows and approvals to match your organization structure.",
+              id: `blk-features-${cat.id}-${sub.id}-${idx + 1}`,
+              type: "cards",
+              cards: [
+                {
+                  icon: "RocketLaunch",
+                  iconColor: "#2196f3",
+                  tag: "REAL-TIME",
+                  title: "Instant Updates",
+                  description:
+                    "Changes are reflected immediately across employee records and dashboards.",
+                },
+                {
+                  icon: "VerifiedUser",
+                  iconColor: "#2196f3",
+                  tag: "COMPLIANCE",
+                  title: "Audit & Validation",
+                  description:
+                    "Built-in checks ensure policy compliance and accurate audit trails.",
+                },
+                {
+                  icon: "Tune",
+                  iconColor: "#2196f3",
+                  tag: "FLEXIBLE",
+                  title: "Configurable Rules",
+                  description:
+                    "Tailor workflows and approvals to match your organization structure.",
+                },
+              ],
+            },
+            {
+              id: `blk-steps-${cat.id}-${sub.id}-${idx + 1}`,
+              type: "step",
+              title: "Step-by-Step Instructions",
+              items: [
+                `Navigate to ${cat.title} from the left navigation menu and open ${sub.title}.`,
+                "Locate the action button or record you want to configure or update.",
+                "Review all required fields and verify the details against your company policy.",
+                "Click Save or Confirm to apply the changes and update the system.",
+              ],
+            },
+            {
+              id: `blk-notes-${cat.id}-${sub.id}-${idx + 1}`,
+              type: "callout",
+              variant: "warning",
+              title: "Important Notes",
+              content:
+                "Changes made after the payroll cut-off date will be reflected in the next cycle.\nOnly authorized managers or admins can approve or override locked records.",
+            },
+            {
+              id: `blk-what-next-${cat.id}-${sub.id}-${idx + 1}`,
+              type: "paragraph",
+              content:
+                "<h3>What Happens Next?</h3><p>Your updates are saved immediately, and relevant notifications or audit logs are generated automatically for your team.</p>",
             },
           ],
-          steps: [
-            `Navigate to ${cat.title} from the left navigation menu and open ${sub.title}.`,
-            "Locate the action button or record you want to configure or update.",
-            "Review all required fields and verify the details against your company policy.",
-            "Click Save or Confirm to apply the changes and update the system.",
-          ],
-          notes: [
-            "Changes made after the payroll cut-off date will be reflected in the next cycle.",
-            "Only authorized managers or admins can approve or override locked records.",
-          ],
-          whatNext:
-            "Your updates are saved immediately, and relevant notifications or audit logs are generated automatically for your team.",
+          prerequisites: [],
+          features: [],
+          steps: [],
+          notes: [],
+          whatNext: "",
           viewCount: 0,
           helpfulCount: 0,
           updatedAt: new Date().toISOString(),

@@ -38,9 +38,13 @@ export function generateBlockId(): string {
   return `blk-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
 }
 
+const ALLOWED_BLOCK_TYPES = new Set<string>(
+  BLOCK_TYPES.map((b) => b.type)
+);
+
 export function getInitialBlocks(initialData?: Article | null): ArticleBlock[] {
   if (initialData?.blocks && initialData.blocks.length > 0) {
-    return initialData.blocks;
+    return initialData.blocks.filter((b) => ALLOWED_BLOCK_TYPES.has(b.type));
   }
 
   if (!initialData) {
@@ -59,11 +63,30 @@ export function getInitialBlocks(initialData?: Article | null): ArticleBlock[] {
   }
 
   if (initialData.prerequisites?.length) {
+    const listItems = initialData.prerequisites
+      .map((item) => `<li>${item}</li>`)
+      .join("");
+
     migrated.push({
       id: "blk-prereq",
-      type: "checklist",
-      title: "Before You Begin",
-      items: initialData.prerequisites,
+      type: "paragraph",
+      content: `<h3>Before You Begin</h3><ul>${listItems}</ul>`,
+    });
+  }
+
+  if (initialData.features?.length) {
+    const featureIcons = ["RocketLaunch", "VerifiedUser", "Tune"];
+
+    migrated.push({
+      id: "blk-features",
+      type: "cards",
+      cards: initialData.features.map((feat, idx) => ({
+        icon: featureIcons[idx] ?? "Analytics",
+        iconColor: "#2196f3",
+        tag: feat.tag,
+        title: feat.title,
+        description: feat.description,
+      })),
     });
   }
 
@@ -83,6 +106,14 @@ export function getInitialBlocks(initialData?: Article | null): ArticleBlock[] {
       variant: "warning",
       title: "Important Notes",
       content: initialData.notes.join("\n"),
+    });
+  }
+
+  if (initialData.whatNext) {
+    migrated.push({
+      id: "blk-what-next",
+      type: "paragraph",
+      content: `<h3>What Happens Next?</h3><p>${initialData.whatNext}</p>`,
     });
   }
 

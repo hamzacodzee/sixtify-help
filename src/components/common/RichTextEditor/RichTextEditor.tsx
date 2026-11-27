@@ -277,6 +277,10 @@ export const RichTextEditor = forwardRef<
                     backgroundColor: "transparent",
                     padding: 0,
                   },
+                  "& ul, & ol": {
+                    paddingLeft: "20px",
+                    margin: "4px 0",
+                  },
                 },
                 "& .MuiTiptap-MenuSelect-root .MuiSelect-icon, & .MuiTiptap-MenuSelect-root .MuiSvgIcon-root":
                   {

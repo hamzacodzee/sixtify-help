@@ -9,15 +9,8 @@ import {
   Box,
   Chip,
   Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Typography,
 } from "@mui/material";
-import CheckIcon from "@mui/icons-material/Check";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import WarningAmberOutlinedIcon from "@mui/icons-material/WarningAmberOutlined";
@@ -120,6 +113,13 @@ export function ArticleBlockRenderer({ blocks }: ArticleBlockRendererProps) {
                 color: "text.secondary",
                 fontSize: "1rem",
                 lineHeight: 1.8,
+                "& h1, & h2, & h3, & h4": {
+                  color: "text.primary",
+                  fontWeight: 700,
+                  mt: 0,
+                  mb: 1,
+                },
+                "& h3": { fontSize: "1.15rem" },
                 "& p": { mt: 0, mb: 1 },
                 "& p:last-child": { mb: 0 },
                 "& ul, & ol": { pl: 3, my: 1 },
@@ -163,31 +163,6 @@ export function ArticleBlockRenderer({ blocks }: ArticleBlockRendererProps) {
                 __html: block.content ?? "",
               }}
             />
-          );
-        }
-
-        if (block.type === "checklist") {
-          return (
-            <Box key={block.id}>
-              {block.title && (
-                <Typography variant="h6" sx={{ fontWeight: 700, mb: 1.5 }}>
-                  {block.title}
-                </Typography>
-              )}
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                {(block.items ?? []).filter(Boolean).map((item, idx) => (
-                  <Box
-                    key={idx}
-                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                  >
-                    <CheckIcon fontSize="small" color="success" />
-                    <Typography variant="body2" color="text.secondary">
-                      {item}
-                    </Typography>
-                  </Box>
-                ))}
-              </Box>
-            </Box>
           );
         }
 
@@ -271,30 +246,6 @@ export function ArticleBlockRenderer({ blocks }: ArticleBlockRendererProps) {
           );
         }
 
-        if (block.type === "code") {
-          return (
-            <Paper
-              key={block.id}
-              variant="outlined"
-              sx={{
-                p: 2,
-                borderRadius: 2,
-                borderColor: "divider",
-                backgroundColor: (theme) =>
-                  theme.palette.mode === "dark" ? "#0b0e14" : "#f1f5f9",
-                overflowX: "auto",
-              }}
-            >
-              <Typography
-                component="pre"
-                sx={{ m: 0, fontFamily: "monospace", fontSize: "0.8125rem" }}
-              >
-                {block.content}
-              </Typography>
-            </Paper>
-          );
-        }
-
         if (block.type === "image" && block.imageUrl) {
           return (
             <Paper
@@ -342,36 +293,6 @@ export function ArticleBlockRenderer({ blocks }: ArticleBlockRendererProps) {
                 </Typography>
               </AccordionDetails>
             </Accordion>
-          );
-        }
-
-        if (block.type === "table") {
-          return (
-            <TableContainer
-              key={block.id}
-              component={Paper}
-              variant="outlined"
-              sx={{ borderRadius: 2 }}
-            >
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    {(block.headers ?? []).map((h, i) => (
-                      <TableCell key={i}>{h}</TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {(block.rows ?? []).map((row, rIdx) => (
-                    <TableRow key={rIdx}>
-                      {row.map((cell, cIdx) => (
-                        <TableCell key={cIdx}>{cell}</TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
           );
         }
 

@@ -14,7 +14,6 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import CheckIcon from "@mui/icons-material/Check";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutlined";
 import WarningAmberOutlinedIcon from "@mui/icons-material/WarningAmberOutlined";
 import BoltOutlinedIcon from "@mui/icons-material/BoltOutlined";
@@ -241,10 +240,19 @@ export default function ArticlePage() {
               <Typography variant="h6" sx={{ fontWeight: 700, mb: 1.5 }}>
                 Before You Begin
               </Typography>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+              <Box
+                component="ul"
+                sx={{
+                  pl: 3,
+                  my: 0,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 1,
+                  color: "text.secondary",
+                }}
+              >
                 {article.prerequisites.map((item, idx) => (
-                  <Box key={idx} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <CheckIcon fontSize="small" color="success" />
+                  <Box component="li" key={idx}>
                     <Typography variant="body2" color="text.secondary">
                       {item}
                     </Typography>
