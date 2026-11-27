@@ -264,22 +264,34 @@ export function ArticleBlockRenderer({ blocks }: ArticleBlockRendererProps) {
             <Paper
               key={block.id}
               variant="outlined"
-              sx={{ p: 1.5, borderRadius: 2, borderColor: "divider" }}
+              sx={{
+                maxWidth: 460,
+                borderRadius: 2.5,
+                borderColor: "divider",
+                backgroundColor: "background.paper",
+                overflow: "hidden",
+                boxShadow: "0 2px 8px rgba(15, 23, 42, 0.04)",
+              }}
             >
               <Box
                 component="img"
                 src={block.imageUrl}
                 alt={block.caption || "Article image"}
-                sx={{ width: "100%", borderRadius: 1.5, display: "block" }}
+                sx={{ width: "100%", maxHeight: 260, display: "block", objectFit: "cover" }}
               />
               {block.caption && (
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  sx={{ mt: 1, display: "block" }}
+                <Box
+                  sx={{
+                    px: 2.5,
+                    py: 1.75,
+                    borderTop: "1px solid",
+                    borderColor: "divider",
+                  }}
                 >
-                  {block.caption}
-                </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.5 }}>
+                    {block.caption}
+                  </Typography>
+                </Box>
               )}
             </Paper>
           );
